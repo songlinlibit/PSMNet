@@ -117,7 +117,7 @@ def main():
             img = pred_disp[top_pad:,:]
         else:
             img = pred_disp
-        
+        np.savetxt("Test_disparity.txt", img) 
         img = (img*256).astype('uint16')
         img = Image.fromarray(img)
         img.save('Test_disparity.png')

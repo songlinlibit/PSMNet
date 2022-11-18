@@ -173,20 +173,8 @@ def main():
 	print('full training time = %.2f HR' %((time.time() - start_full_time)/3600))
 
 	#------------- TEST ------------------------------------------------------------
-	total_test_loss = 0
-	for batch_idx, (imgL, imgR, disp_L) in enumerate(TestImgLoader):
-	       test_loss = test(imgL,imgR, disp_L)
-	       print('Iter %d test loss = %.3f' %(batch_idx, test_loss))
-	       total_test_loss += test_loss
-
-	print('total test loss = %.3f' %(total_test_loss/len(TestImgLoader)))
 	#----------------------------------------------------------------------------------
 	#SAVE test information
-	savefilename = args.savemodel+'testinformation.tar'
-	torch.save({
-		    'test_loss': total_test_loss/len(TestImgLoader),
-		}, savefilename)
-
 
 if __name__ == '__main__':
    main()

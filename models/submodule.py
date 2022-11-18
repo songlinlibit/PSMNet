@@ -104,6 +104,7 @@ class feature_extraction(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        print("input size :", x.size)
         output      = self.firstconv(x)
         output      = self.layer1(output)
         output_raw  = self.layer2(output)

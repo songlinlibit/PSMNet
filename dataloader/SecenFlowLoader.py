@@ -22,7 +22,8 @@ def default_loader(path):
     return Image.open(path).convert('RGB')
 
 def disparity_loader(path):
-    return rp.readPFM(path)
+    return np.loadtxt(path), 1
+   # return rp.readPFM(path)
 
 class myImageFloder(data.Dataset):
     def __init__(self, left, right, left_disparity, training, loader=default_loader, dploader= disparity_loader):
@@ -48,13 +49,15 @@ class myImageFloder(data.Dataset):
         if self.training:  
             w, h = left_img.size
             th, tw = 256, 512
+            # print("w : " ,w)
+            # print("h : " ,h)
 
             x1 = random.randint(0, w - tw)
             y1 = random.randint(0, h - th)
 
             left_img = left_img.crop((x1, y1, x1 + tw, y1 + th))
             right_img = right_img.crop((x1, y1, x1 + tw, y1 + th))
-
+            # print("left_img after crop : ", left_img.size)
             dataL = dataL[y1:y1 + th, x1:x1 + tw]
 
             processed = preprocess.get_transform(augment=False)  

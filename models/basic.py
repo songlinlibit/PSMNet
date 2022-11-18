@@ -61,11 +61,13 @@ class PSMNet(nn.Module):
 
         refimg_fea     = self.feature_extraction(left)
         targetimg_fea  = self.feature_extraction(right)
+        print("refimg_fea.shape : ",refimg_fea.shape)
+        print("targetimg_fea.shape : ",targetimg_fea.shape)
  
         #matching
-        cost = Variable(torch.FloatTensor(refimg_fea.size()[0], refimg_fea.size()[1]*2, self.maxdisp/4,  refimg_fea.size()[2],  refimg_fea.size()[3]).zero_(), volatile= not self.training).cuda()
-
-        for i in range(self.maxdisp/4):
+        cost = Variable(torch.FloatTensor(refimg_fea.size()[0], refimg_fea.size()[1]*2, self.maxdisp//4,  refimg_fea.size()[2],  refimg_fea.size()[3]).zero_(), volatile= not self.training).cuda()
+        print("cost.shape : ",cost.shape)
+        for i in range(self.maxdisp//4):
             if i > 0 :
              cost[:, :refimg_fea.size()[1], i, :,i:]   = refimg_fea[:,:,:,i:]
              cost[:, refimg_fea.size()[1]:, i, :,i:] = targetimg_fea[:,:,:,:-i]
@@ -73,12 +75,18 @@ class PSMNet(nn.Module):
              cost[:, :refimg_fea.size()[1], i, :,:]   = refimg_fea
              cost[:, refimg_fea.size()[1]:, i, :,:]   = targetimg_fea
         cost = cost.contiguous()
+        print("cost.shape after concat : ",cost.shape)
 
         cost0 = self.dres0(cost)
+        print("cost0.shape : ",cost0.shape)
         cost0 = self.dres1(cost0) + cost0
+        print("cost0.shape : ",cost0.shape)
         cost0 = self.dres2(cost0) + cost0 
+        print("cost0.shape : ",cost0.shape)
         cost0 = self.dres3(cost0) + cost0 
+        print("cost0.shape : ",cost0.shape)
         cost0 = self.dres4(cost0) + cost0
+        print("cost0.shape : ",cost0.shape)
 
         cost = self.classify(cost0)
         cost = F.upsample(cost, [self.maxdisp,left.size()[2],left.size()[3]], mode='trilinear')
